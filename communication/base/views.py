@@ -128,7 +128,6 @@ def chat_room(request, room_id):
         'receiver': receiver
     })
 
-
 class InterestViewSet(viewsets.ModelViewSet):
     queryset = Interest.objects.all()
     serializer_class = InterestSerializer
