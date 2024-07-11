@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Site{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <script src="{% static 'js/scripts.js' %}"></script>
+    <script src="https://unpkg.com/htmx.org/dist/htmx.js"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/ws.js"></script>
+</head>
+<body>
+    <nav>
+        {% if user.is_authenticated %}
+        <div class="nav-container">
+            <a href="{% url 'index' %}">Home</a>
+            <a href="{% url 'user_list' %}">Users</a>
+            <a href="{% url 'received_interests' %}">Received Interests</a>
+            <a href="{% url 'chat_list' %}">Chats</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        </div>
+        {% else %}
+        <div class="nav-container">
+            <a href="{% url 'index' %}">Home</a>
+            <a href="{% url 'login' %}?next={% url 'user_list' %}">Users</a>
+            <a href="{% url 'login' %}?next={% url 'received_interests' %}">Received Interests</a>
+            <a href="{% url 'login' %}?next={% url 'chat_list' %}">Chats</a>
+            <a href="{% url 'login' %}">Login</a>
+            
+            
+        </div>
+        {% endif %}
+    </nav>
+    <div class="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

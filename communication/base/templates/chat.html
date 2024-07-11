@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Chat{% endblock %}
+
+{% block content %}
+
+    <div class="chat-container">
+        <div class="chat-header">
+            Chat with {{ other_user.username }}
+        </div>
+        <div id="chat-log">
+            {% for message in messages %}
+                <p><strong>{{ message.sender.username }}:</strong> {{ message.content }}</p>
+            {% endfor %}
+        </div>
+        <div class="chat-form-container">
+            <form id="chat-message-form" method="post">
+                {% csrf_token %}
+                <input type="text" id="chat-message-input" name="message" placeholder="Type your message..." required>
+                <button type="submit" id="chat-message-submit">Send</button>
+            </form>
+        </div>
+        <a href="{% url 'chat_list' %}" class="back-to-chats">Back to Chats</a>
+    </div>
+
+    <script>
+        const roomName = '{{ room_name }}';
+        const chatSocket = new WebSocket(`ws://${window.location.host}/ws/chat/${roomName}/`);
+
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            const message = data.message;
+            const sender = data.sender;
+
+            const chatLog = document.querySelector('#chat-log');
+            const messageElement = document.createElement('p');
+            messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
+            chatLog.appendChild(messageElement);
+
+            // Scroll to the latest message
+            chatLog.scrollTop = chatLog.scrollHeight;
+        };
+
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+        // Function to send message
+        function sendMessage(message) {
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                'receiver_id': {{ other_user.id }}
+            }));
+        }
+
+        // Event listener for form submission
+        document.querySelector('#chat-message-form').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent form submission
+            const messageInputDom = document.querySelector('#chat-message-input');
+            const message = messageInputDom.value.trim();
+            if (message !== '') {
+                sendMessage(message);
+                messageInputDom.value = ''; // Clear input field
+            }
+        });
+
+        // Focus on the input field when the page loads
+        document.querySelector('#chat-message-input').focus();
+    </script>
+
+{% endblock %}

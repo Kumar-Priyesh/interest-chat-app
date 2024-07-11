@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Received Interests{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Received Interests</h2>
+    <ul class="interest-list">
+        {% for interest in received_interests %}
+        <li class="received-interest">
+            <span><b>From:</b> {{ interest.sender.username }}</span>
+            <a class="accept-btn" href="{% url 'accept_interest' interest.id %}">Accept</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
+
