@@ -10,11 +10,8 @@ from .forms import UserRegistrationForm, UserLoginForm
 from .models import Interest, Message
 from .serializers import InterestSerializer, MessageSerializer
 from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
 from django.template.loader import render_to_string
-from django.http import HttpResponse
-from django.http import HttpResponseRedirect
-
+from django.http import HttpResponse, HttpResponseRedirect
 
 def register_view(request):
     if request.method == 'POST':
